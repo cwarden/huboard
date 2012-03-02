@@ -48,6 +48,16 @@ module Huboard
       end
     end
 
+    # TypeErrors occur in Pebble when user revokes access.
+    # Perhaps there should be better error handling in stint.
+    set :raise_errors, false
+    set :show_exceptions, false
+    error do
+      puts 'Unhandled error: ' + env['sinatra.error'].name + ': ' + env['sinatra.error'].message
+      logout!
+      redirect '/'
+    end
+
     get '/' do 
       return erb :home unless authenticated?
       protected!

@@ -29,6 +29,18 @@ module Huboard
       authenticate! unless authenticated?
     end
 
+    # TypeErrors occur in Pebble when user revokes access.
+    # Perhaps there should be better error handling in stint.
+    set :raise_errors, false
+    set :show_exceptions, false
+    error do
+      error = 'Unhandled API error: ' + env['sinatra.error'].message
+      puts error
+      logout!
+      # TODO: send an error back to redirect that causes a redirect
+      body json({ :error => error })
+    end
+
     # json api
     get '/:user/:repo/milestones' do
       return json pebble.milestones(params[:user],params[:repo])
