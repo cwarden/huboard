@@ -42,6 +42,7 @@ module Huboard
     end
 
     get '/' do 
+      redirect to('https://' + request.host + '/') unless request.scheme == 'https' or development?
       return erb :home unless authenticated?
       protected!
       @repos = pebble.all_repos
